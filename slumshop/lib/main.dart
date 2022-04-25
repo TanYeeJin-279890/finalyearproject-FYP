@@ -48,7 +48,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(64.0),
-              child: Image.asset('assets/images/1.png'),
+              child: Image.asset('assets/images/Shopping.jpg'),
             ),
             const Text(
               "SlumShop (Admin)",

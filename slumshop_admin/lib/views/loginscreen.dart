@@ -91,11 +91,13 @@ class _LoginScreenState extends State<LoginScreen> {
   void _loginUser() {
     String _email = emailCtrller.text;
     String _password = passwordCtrller.text;
+    // ignore: avoid_print
     print(_email);
     if (_email.isNotEmpty && _password.isNotEmpty) {
       http.post(
           Uri.parse("http://10.19.4.74/slumshop/mobile/php/login_user.php"),
           body: {"email": _email, "password": _password}).then((response) {
+        // ignore: avoid_print
         print(response.body);
         if (response.body == "success") {
           Fluttertoast.showToast(
