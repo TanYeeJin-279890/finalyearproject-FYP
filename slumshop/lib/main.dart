@@ -40,14 +40,14 @@ class MySplashScreen extends StatefulWidget {
 
 class _MySplashScreenState extends State<MySplashScreen> {
   late double screenHeight, screenWidth;
-  @override
+  /*@override
   void initState() {
     super.initState();
     Timer(
         const Duration(seconds: 3),
         () => Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (content) => const MainScreen())));
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(64.0),
-              child: Image.asset('assets/images/1.png'),
+              child: Image.asset('assets/images/123.png'),
             ),
             const Text(
               "SlumShop (Admin)",
