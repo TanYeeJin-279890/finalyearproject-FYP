@@ -1,6 +1,6 @@
-import 'dart:async';
+//import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:slumshop/views/mainscrn.dart';
+//import 'package:slumshop/views/mainscrn.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SlumShop Admin',
+      title: 'SlumShop',
       theme: ThemeData(primarySwatch: Colors.red),
       home: const MySplashScreen(title: 'SlumShop Admin'),
     );
@@ -27,45 +27,18 @@ class MySplashScreen extends StatefulWidget {
 }
 
 class _MySplashScreenState extends State<MySplashScreen> {
-  late double screenHeight, screenWidth;
-  @override
-  void initState() {
-    super.initState();
-    Timer(
-        const Duration(seconds: 3),
-        () => Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (content) => const MainScreen())));
-  }
-
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(64.0),
-              child: Image.asset('assets/images/Shopping.jpg'),
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/images/1.png'), fit: BoxFit.cover),
             ),
-            const Text(
-              "SlumShop (Admin)",
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const CircularProgressIndicator(),
-            const Text("Version 0.1",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                )),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
