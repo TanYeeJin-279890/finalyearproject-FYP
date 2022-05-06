@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:slumshop/views/mainscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,14 +41,14 @@ class MySplashScreen extends StatefulWidget {
 
 class _MySplashScreenState extends State<MySplashScreen> {
   late double screenHeight, screenWidth;
-  /*@override
+  @override
   void initState() {
     super.initState();
     Timer(
         const Duration(seconds: 3),
         () => Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (content) => const MainScreen())));
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
