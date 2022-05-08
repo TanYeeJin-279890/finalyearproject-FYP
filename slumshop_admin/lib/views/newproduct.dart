@@ -18,6 +18,7 @@ class NewProduct extends StatefulWidget {
 class _NewProductState extends State<NewProduct> {
   late double screenHeight, screenWidth, ctrwidth;
   String pathAsset = 'assets/images/camera.png';
+  // ignore: prefer_typing_uninitialized_variables
   var _image;
   final TextEditingController _prnameEditingController =
       TextEditingController();
@@ -42,6 +43,7 @@ class _NewProductState extends State<NewProduct> {
 
   @override
   void dispose() {
+    // ignore: avoid_print
     print("dispose was called");
     _prnameEditingController.dispose();
     _prdescEditingController.dispose();

@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
             UserAccountsDrawerHeader(
               accountName: Text(widget.admin.name.toString()),
               accountEmail: Text(widget.admin.email.toString()),
-              currentAccountPicture: CircleAvatar(
+              currentAccountPicture: const CircleAvatar(
                 backgroundImage: NetworkImage(
                     "https://cdn.myanimelist.net/r/360x360/images/characters/9/310307.jpg?s=56335bffa6f5da78c3824ba0dae14a26"),
               ),
