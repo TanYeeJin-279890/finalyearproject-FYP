@@ -206,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       http.post(
-          Uri.parse(CONSTANTS.server + "/slumshop/mobile/php/login_user.php"),
+          Uri.parse(CONSTANTS.server + "slumshop/mobile/php/login_user.php"),
           body: {"email": _email, "password": _password}).then((response) {
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == 'success') {
