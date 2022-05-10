@@ -289,7 +289,7 @@ class _NewProductState extends State<NewProduct> {
     );
     if (pickedFile != null) {
       _image = File(pickedFile.path);
-      _cropImage();
+      //_cropImage();
     }
   }
 
@@ -302,34 +302,34 @@ class _NewProductState extends State<NewProduct> {
     );
     if (pickedFile != null) {
       _image = File(pickedFile.path);
-      _cropImage();
+      //_cropImage();
     }
   }
 
-  Future<void> _cropImage() async {
-    File? croppedFile = await ImageCropper().cropImage(
-        sourcePath: _image!.path,
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-          // CropAspectRatioPreset.ratio3x2,
-          // CropAspectRatioPreset.original,
-          // CropAspectRatioPreset.ratio4x3,
-          // CropAspectRatioPreset.ratio16x9
-        ],
-        androidUiSettings: const AndroidUiSettings(
-            toolbarTitle: 'Cropper',
-            toolbarColor: Colors.deepOrange,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false),
-        iosUiSettings: const IOSUiSettings(
-          minimumAspectRatio: 1.0,
-        ));
-    if (croppedFile != null) {
-      _image = croppedFile;
-      setState(() {});
-    }
-  }
+  // Future<void> _cropImage() async {
+  //   File? croppedFile = await ImageCropper().cropImage(
+  //       sourcePath: _image!.path,
+  //       aspectRatioPresets: [
+  //         CropAspectRatioPreset.square,
+  //         // CropAspectRatioPreset.ratio3x2,
+  //         // CropAspectRatioPreset.original,
+  //         // CropAspectRatioPreset.ratio4x3,
+  //         // CropAspectRatioPreset.ratio16x9
+  //       ],
+  //       androidUiSettings: const AndroidUiSettings(
+  //           toolbarTitle: 'Cropper',
+  //           toolbarColor: Colors.deepOrange,
+  //           toolbarWidgetColor: Colors.white,
+  //           initAspectRatio: CropAspectRatioPreset.original,
+  //           lockAspectRatio: false),
+  //       iosUiSettings: const IOSUiSettings(
+  //         minimumAspectRatio: 1.0,
+  //       ));
+  //   if (croppedFile != null) {
+  //     _image = croppedFile;
+  //     setState(() {});
+  //   }
+  // }
 
   void _insertDialog() {
     if (_formKey.currentState!.validate() && _image != null) {
