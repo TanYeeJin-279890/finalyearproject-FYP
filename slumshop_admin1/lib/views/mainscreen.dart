@@ -45,12 +45,12 @@ class _MainScreenState extends State<MainScreen> {
             text: 'My Products',
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (content) => ProductScreen(
-                            admin: widget.admin,
-                          )));
+              //   Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //           builder: (content) => ProductScreen(
+              //                 admin: widget.admin,
+              //               )));
             },
           ),
           _createDrawerItem(

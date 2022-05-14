@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -54,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: screenWidth,
                           child: Image.asset('assets/images/1.png')),
                       const Text(
-                        "Login",
+                        "Login/Admin",
                         style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -110,6 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           const Text("Remember Me")
                         ],
                       ),
+                      //use sizedbox widget to be able to define the width of the elevated button
                       SizedBox(
                         width: screenWidth,
                         height: 50,
@@ -204,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Uri.parse(CONSTANTS.server + "/slumshop/mobile/php/login_user.php"),
           body: {"email": _email, "password": _password}).then((response) {
         var data = jsonDecode(response.body);
-        if (response.statusCode == 200 && data['status'] == 'success') {
+        if (response.body == 'success') {
           Admin admin = Admin.fromJson(data['data']);
           // String name = data['data']['name'];
           // String email = data['data']['email'];
