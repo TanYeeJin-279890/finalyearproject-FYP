@@ -325,24 +325,27 @@ class _NewProductState extends State<NewProduct> {
   }
 
   Future<void> _cropImage() async {
-    File? croppedFile = (await ImageCropper().cropImage(
-        sourcePath: _image!.path,
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-          // CropAspectRatioPreset.ratio3x2,
-          // CropAspectRatioPreset.original,
-          // CropAspectRatioPreset.ratio4x3,
-          // CropAspectRatioPreset.ratio16x9
-        ],
-        androidUiSettings: AndroidUiSettings(
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: _image!.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9
+      ],
+      uiSettings: [
+        AndroidUiSettings(
             toolbarTitle: 'Cropper',
             toolbarColor: Colors.deepOrange,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
-        iosUiSettings: IOSUiSettings(
-          minimumAspectRatio: 1.0,
-        ))) as File?;
+        IOSUiSettings(
+          title: 'Cropper',
+        ),
+      ],
+    );
     if (croppedFile != null) {
       _image = croppedFile;
       setState(() {});

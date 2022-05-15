@@ -9,7 +9,7 @@ import '../constant.dart';
 import '../models/admin.dart';
 import '../models/product.dart';
 import 'mainscreen.dart';
-import 'package:intl/intl_browser.dart';
+import 'package:intl/intl.dart';
 
 import 'updprscreen.dart';
 
