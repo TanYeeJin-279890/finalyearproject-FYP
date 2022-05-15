@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'views/loginscreen.dart';
+import 'package:slumshop_admin1/views/loginscreen1.dart';
+//import 'views/loginscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
@@ -43,7 +44,7 @@ class _MySplashScreenState extends State<MySplashScreen> {
     Timer(
         const Duration(seconds: 3),
         () => Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (content) => const LoginScreen())));
+            MaterialPageRoute(builder: (content) => const LoginScreen1())));
   }
 
   @override

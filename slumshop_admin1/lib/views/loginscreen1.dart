@@ -1,21 +1,24 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:slumshop_admin1/constant.dart';
+import 'package:slumshop_admin1/views/mainscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../constant.dart';
 import '../models/admin.dart';
 import 'mainscreen.dart';
 
-//void main() => runApp(MyApp());
+class LoginScreen1 extends StatefulWidget {
+  const LoginScreen1({Key? key}) : super(key: key);
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginScreen1> createState() => _LoginScreen1State();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreen1State extends State<LoginScreen1> {
   late double screenHeight, screenWidth, ctrwidth;
   bool remember = false;
   final TextEditingController _emailController = TextEditingController();
@@ -23,15 +26,21 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    loadPref();
+  }
+
+  @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     if (screenWidth >= 800) {
       ctrwidth = screenWidth / 1.5;
-    } else {
+    }
+    if (screenWidth < 800) {
       ctrwidth = screenWidth;
     }
-
     return Scaffold(
         body: SingleChildScrollView(
       child: Center(
@@ -53,11 +62,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: screenWidth,
                           child: Image.asset('assets/images/1.png')),
                       const Text(
-                        "Login/Admin",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.orange),
+                        "Login",
+                        style: TextStyle(fontSize: 24),
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
@@ -68,19 +74,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(5.0))),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Pls enter valid email.';
+                            return 'Please enter valid email';
                           }
                           bool emailValid = RegExp(
                                   r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                               .hasMatch(value);
 
                           if (!emailValid) {
-                            return 'Pls enter valid email.';
+                            return 'Please enter a valid email';
                           }
                           return null;
                         },
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       TextFormField(
                         controller: _passwordController,
                         obscureText: true,
@@ -90,10 +98,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(5.0))),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Pls enter your password.';
+                            return 'Please enter your password';
                           }
                           if (value.length < 6) {
-                            return 'Password must be at least 6 characters long.';
+                            return "Password must be at least 6 characters";
                           }
                           return null;
                         },
@@ -109,7 +117,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           const Text("Remember Me")
                         ],
                       ),
-                      //use sizedbox widget to be able to define the width of the elevated button
                       SizedBox(
                         width: screenWidth,
                         height: 50,
@@ -160,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } else {
       Fluttertoast.showToast(
-          msg: "Preference Removed",
+          msg: "Preference Failed",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -204,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Uri.parse(CONSTANTS.server + "/slumshop/mobile/php/login_user.php"),
           body: {"email": _email, "password": _password}).then((response) {
         var data = jsonDecode(response.body);
-        if (response.body == 'success') {
+        if (response.statusCode == 200 && data['status'] == 'success') {
           Admin admin = Admin.fromJson(data['data']);
           // String name = data['data']['name'];
           // String email = data['data']['email'];
@@ -212,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // String datereg = data['data']['datereg'];
           // String role = data['data']['role'];
           // Admin admin = Admin(
-          // name: name, email: email, id: id, role: role, datereg: datereg);
+          //     name: name, email: email, id: id, role: role, datereg: datereg);
 
           Fluttertoast.showToast(
               msg: "Success",
