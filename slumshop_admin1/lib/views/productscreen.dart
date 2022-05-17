@@ -312,9 +312,10 @@ class _ProductScreenState extends State<ProductScreen> {
       items: [
         PopupMenuItem(
           child: GestureDetector(
-              onTap: () => {
+              //await= any query being made client will know(refresh to update client)
+              onTap: () async => {
                     Navigator.of(context).pop(),
-                    Navigator.push(
+                    await Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (content) => UpdateProductScreen(
