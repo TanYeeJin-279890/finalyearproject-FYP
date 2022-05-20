@@ -61,7 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
             child: GestureDetector(
                 onTap: () => {_takePictureDialog()},
                 child: SizedBox(
-                    height: screenHeight / 3.5,
+                    height: screenHeight / 3,
                     width: screenWidth,
                     child: _image == null
                         ? Image.asset(pathAsset)
@@ -70,7 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             fit: BoxFit.cover,
                           ))),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Container(
             padding: const EdgeInsets.all(10.0),
             child: TextFormField(
@@ -90,7 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
               },
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Container(
             padding: const EdgeInsets.all(10.0),
             child: TextFormField(
@@ -113,7 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
               },
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Container(
             padding: const EdgeInsets.all(10.0),
             child: TextFormField(
@@ -132,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
               },
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Container(
             padding: const EdgeInsets.all(10.0),
             child: TextFormField(
@@ -151,7 +151,7 @@ class _RegisterPageState extends State<RegisterPage> {
               },
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Container(
             padding: const EdgeInsets.all(10.0),
             child: TextFormField(
@@ -187,7 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
               },
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Container(
             padding: const EdgeInsets.all(10.0),
             child: TextFormField(
