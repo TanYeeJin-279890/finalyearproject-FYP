@@ -16,7 +16,7 @@ class _MainScreenState extends State<MainScreen> {
       title: 'Material App',
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Material App Bar'),
+          title: Text('Dashboard'),
         ),
         body: Center(
           child: Container(
