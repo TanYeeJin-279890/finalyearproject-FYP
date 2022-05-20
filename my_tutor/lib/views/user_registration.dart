@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_cropper/image_cropper.dart';
+import 'package:image_cropper/image_cropper.dart'
+    show AndroidUiSettings, CropAspectRatioPreset, IOSUiSettings, ImageCropper;
 import 'package:image_picker/image_picker.dart';
 import '../constant.dart';
-import '../models/reg.dart';
 import 'userlogin.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -18,11 +18,8 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   String pathAsset = 'assets/images/camera.png';
-  final focus = FocusNode();
-  final focus1 = FocusNode();
-  final focus2 = FocusNode();
-  final focus3 = FocusNode();
   var _image;
+  bool _passwordVisible = true;
   late double screenHeight,
       screenWidth,
       resWidth; //used to get the device width and height and set up a responsive widget.
@@ -78,9 +75,6 @@ class _RegisterPageState extends State<RegisterPage> {
             padding: const EdgeInsets.all(10.0),
             child: TextFormField(
               textInputAction: TextInputAction.next,
-              onFieldSubmitted: (v) {
-                FocusScope.of(context).requestFocus(focus);
-              },
               controller: _nameController,
               decoration: InputDecoration(
                   contentPadding: const EdgeInsets.all(10.0),
@@ -101,9 +95,6 @@ class _RegisterPageState extends State<RegisterPage> {
             padding: const EdgeInsets.all(10.0),
             child: TextFormField(
               textInputAction: TextInputAction.next,
-              onFieldSubmitted: (v) {
-                FocusScope.of(context).requestFocus(focus1);
-              },
               controller: _emailController,
               decoration: InputDecoration(
                   contentPadding: const EdgeInsets.all(10.0),
@@ -112,7 +103,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0))),
               validator: (value) {
-                if (value == null || value.isEmpty) {
+                if (value == null ||
+                    value.isEmpty ||
+                    !value.contains("@") ||
+                    !value.contains(".")) {
                   return 'Please enter valid email';
                 }
                 return null;
@@ -161,12 +155,22 @@ class _RegisterPageState extends State<RegisterPage> {
           Container(
             padding: const EdgeInsets.all(10.0),
             child: TextFormField(
+              obscureText: _passwordVisible,
               textInputAction: TextInputAction.next,
-              onFieldSubmitted: (v) {
-                FocusScope.of(context).requestFocus(focus2);
-              },
               controller: _passwordController,
               decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _passwordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _passwordVisible = !_passwordVisible;
+                      });
+                    },
+                  ),
                   contentPadding: const EdgeInsets.all(10.0),
                   labelText: 'Enter your password',
                   prefixIcon: const Icon(Icons.title),
@@ -187,12 +191,22 @@ class _RegisterPageState extends State<RegisterPage> {
           Container(
             padding: const EdgeInsets.all(10.0),
             child: TextFormField(
+              obscureText: _passwordVisible,
               textInputAction: TextInputAction.next,
-              onFieldSubmitted: (v) {
-                FocusScope.of(context).requestFocus(focus3);
-              },
               controller: _repasswordController,
               decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _passwordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _passwordVisible = !_passwordVisible;
+                      });
+                    },
+                  ),
                   contentPadding: const EdgeInsets.all(10.0),
                   labelText: 'Please re-enter your password',
                   prefixIcon: const Icon(Icons.title),
@@ -204,7 +218,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   return 'Please re-enter your password';
                 }
                 if (value != password) {
-                  return "Re-entered password must be the same as previous.";
+                  return "Re-entered password not match.";
                 }
                 return null;
               },
@@ -220,7 +234,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                           side: const BorderSide(color: Colors.red)))),
-              onPressed: _registerUser,
+              onPressed: _regDialog,
             ),
           ),
           const SizedBox(
@@ -295,51 +309,66 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  Future<void> _cropImage() async {
+    File? croppedFile = await ImageCropper().cropImage(
+        sourcePath: _image!.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+        ],
+        androidUiSettings: const AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: const IOSUiSettings(
+          minimumAspectRatio: 1.0,
+        ));
+    if (croppedFile != null) {
+      _image = croppedFile;
+      setState(() {});
+    }
+  }
+
   void _regDialog() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      Fluttertoast.showToast(
-          msg: "Please complete the registration form first",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          fontSize: 14.0);
-      return;
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: const Text(
+              "Register new account?",
+              style: TextStyle(),
+            ),
+            content: const Text("Are you sure?", style: TextStyle()),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  "Yes",
+                  style: TextStyle(),
+                ),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  _registerUser();
+                },
+              ),
+              TextButton(
+                child: const Text(
+                  "No",
+                  style: TextStyle(),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          title: const Text(
-            "Register new account?",
-            style: TextStyle(),
-          ),
-          content: const Text("Are you sure?", style: TextStyle()),
-          actions: <Widget>[
-            TextButton(
-              child: const Text(
-                "Yes",
-                style: TextStyle(),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text(
-                "No",
-                style: TextStyle(),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _registerUser() {
@@ -383,30 +412,5 @@ class _RegisterPageState extends State<RegisterPage> {
         return;
       }
     });
-  }
-
-  Future<void> _cropImage() async {
-    File? croppedFile = (await ImageCropper()
-        .cropImage(sourcePath: _image!.path, aspectRatioPresets: [
-      CropAspectRatioPreset.square,
-      // CropAspectRatioPreset.ratio3x2,
-      // CropAspectRatioPreset.original,
-      // CropAspectRatioPreset.ratio4x3,
-      // CropAspectRatioPreset.ratio16x9
-    ], uiSettings: [
-      AndroidUiSettings(
-          toolbarTitle: 'Cropper',
-          toolbarColor: Colors.deepOrange,
-          toolbarWidgetColor: Colors.white,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false),
-      IOSUiSettings(
-        minimumAspectRatio: 1.0,
-      )
-    ])) as File?;
-    if (croppedFile != null) {
-      _image = croppedFile;
-      setState(() {});
-    }
   }
 }

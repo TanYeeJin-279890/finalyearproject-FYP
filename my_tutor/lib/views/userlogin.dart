@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
                             labelText: 'Email',
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0))),
+                                borderRadius: BorderRadius.circular(30.0))),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter valid email';
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
                             labelText: 'Password',
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0))),
+                                borderRadius: BorderRadius.circular(30.0))),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your password';
