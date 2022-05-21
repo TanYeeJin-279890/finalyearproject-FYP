@@ -5,7 +5,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-//import 'reg.dart';
 import '../constant.dart';
 import '../models/reg.dart';
 import 'mainscreen.dart';
@@ -239,13 +238,6 @@ class _LoginPageState extends State<LoginPage> {
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == 'success') {
           Registration reg = Registration.fromJson(data['data']);
-          // String name = data['data']['name'];
-          // String email = data['data']['email'];
-          // String id = data['data']['id'];
-          // String datereg = data['data']['datereg'];
-          // String role = data['data']['role'];
-          // Admin admin = Admin(
-          //     name: name, email: email, id: id, role: role, datereg: datereg);
 
           Fluttertoast.showToast(
               msg: "Success",
