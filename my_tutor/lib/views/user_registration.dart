@@ -103,11 +103,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0))),
               validator: (value) {
-                if (value == null ||
-                    value.isEmpty ||
-                    !value.contains("@") ||
-                    !value.contains(".")) {
-                  return 'Please enter valid email';
+                if (value == null || value.isEmpty) {
+                  return 'Please fill in the email';
+                }
+                if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                    .hasMatch(value)) {
+                  return 'Please enter a valid email address';
                 }
                 return null;
               },
@@ -180,9 +181,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your password';
                 }
-                if (value.length < 6) {
-                  return "Password must be at least 6 characters";
+                if (!RegExp(
+                        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$')
+                    .hasMatch(value)) {
+                  return 'Please enter a valid password';
                 }
+                //add validator for the password pattern
                 return null;
               },
             ),
@@ -340,7 +344,7 @@ class _RegisterPageState extends State<RegisterPage> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: const Text(
-              "Register new account?",
+              "Register as new user?",
               style: TextStyle(),
             ),
             content: const Text("Are you sure?", style: TextStyle()),
