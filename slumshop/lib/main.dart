@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:slumshop_admin/views/loginscreen.dart';
+import 'package:slumshop/views/login.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {

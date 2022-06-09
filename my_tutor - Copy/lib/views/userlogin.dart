@@ -2,23 +2,22 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sn_progress_dialog/sn_progress_dialog.dart';
+import '../constant.dart';
+import '../models/reg.dart';
+import 'mainscreen.dart';
+import 'user_registration.dart';
 
-import '../../constants.dart';
-import '../../models/customer.dart';
-import 'mainscrn.dart';
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginPageState extends State<LoginPage> {
   late double screenHeight, screenWidth, ctrwidth;
   bool remember = false;
   final TextEditingController _emailController = TextEditingController();
@@ -60,18 +59,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(
                           height: screenHeight / 2.5,
                           width: screenWidth,
-                          child: Image.asset('assets/images/1.png')),
+                          child: Image.asset('assets/images/tutor.png')),
                       const Text(
                         "Login",
-                        style: TextStyle(fontSize: 24),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red),
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
                         controller: _emailController,
                         decoration: InputDecoration(
-                            labelText: 'Email',
+                            labelText: 'Enter your Email Address',
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0))),
+                                borderRadius: BorderRadius.circular(30.0))),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter valid email';
@@ -93,9 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: _passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
-                            labelText: 'Password',
+                            labelText: 'Enter your Password',
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0))),
+                                borderRadius: BorderRadius.circular(30.0))),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your password';
@@ -121,10 +124,32 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: screenWidth,
                         height: 50,
                         child: ElevatedButton(
-                          child: const Text("Login"),
+                          child: const Text("Login",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          style: ButtonStyle(
+                              shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                      side: const BorderSide(
+                                          color: Colors.red)))),
                           onPressed: _loginUser,
                         ),
-                      )
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      GestureDetector(
+                        child: const Text("Not Yet Registered? Click Me!",
+                            style: TextStyle(color: Colors.blue)),
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      const RegisterPage()));
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -136,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
-  void _saveRemovePref(bool value) async {
+  Future<void> _saveRemovePref(bool value) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       String email = _emailController.text;
@@ -207,30 +232,24 @@ class _LoginScreenState extends State<LoginScreen> {
     String _password = _passwordController.text;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      ProgressDialog pd = ProgressDialog(context: context);
-      pd.show(msg: 'Logging in..', max: 100);
       http.post(
-          Uri.parse(CONSTANTS.server + "/slumshop/mobile/php/cust_login.php"),
+          Uri.parse(CONSTANTS.server + "/mytutor_mp/mobile/php/login.php"),
           body: {"email": _email, "password": _password}).then((response) {
-        print(response.body);
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == 'success') {
+          Registration reg = Registration.fromJson(data['data']);
+
           Fluttertoast.showToast(
               msg: "Success",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
               fontSize: 16.0);
-          pd.update(value: 100, msg: "Completed");
-          pd.close();
-          var extractdata = data['data'];
-          Customer customer = Customer.fromJson(extractdata);
-          print(customer.email);
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (content) => MainScreen(
-                        customer: customer,
+                        reg: reg,
                       )));
         } else {
           Fluttertoast.showToast(
@@ -239,8 +258,6 @@ class _LoginScreenState extends State<LoginScreen> {
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
               fontSize: 16.0);
-          pd.update(value: 100, msg: "Failed");
-          pd.close();
         }
       });
     }
