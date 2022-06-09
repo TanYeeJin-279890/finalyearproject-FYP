@@ -233,12 +233,13 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       http.post(
-          Uri.parse(CONSTANTS.server + "/mytutor_mp/mobile/php/login.php"),
+          Uri.parse(
+              CONSTANTS.server + "/mytutor_mp_server/mobile/php/login.php"),
           body: {"email": _email, "password": _password}).then((response) {
+        print(response.body);
         var data = jsonDecode(response.body);
         if (response.statusCode == 200 && data['status'] == 'success') {
           Registration reg = Registration.fromJson(data['data']);
-
           Fluttertoast.showToast(
               msg: "Success",
               toastLength: Toast.LENGTH_SHORT,
