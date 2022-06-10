@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../constant.dart';
 import '../models/tutor.dart';
 import 'user_registration.dart';
@@ -22,8 +23,8 @@ class _TutorPageState extends State<TutorPage> {
   String search = "";
   late double screenHeight, screenWidth, resWidth;
 
-  int index = 1;
-  //final df = DateFormat('dd/MM/yyyy hh:mm a');
+  //int index = 1;
+  final df = DateFormat.yMd();
   var numofpage, curpage = 1;
   var color;
 
@@ -48,6 +49,9 @@ class _TutorPageState extends State<TutorPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
+        title: const Text(
+          'Awesome Tutors',
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -71,62 +75,91 @@ class _TutorPageState extends State<TutorPage> {
                       childAspectRatio: (1 / 1),
                       children: List.generate(tutorList.length, (index) {
                         return InkWell(
-                          splashColor: Colors.amber,
-                          onTap: () => {_loadTutorDetails},
+                          splashColor: Colors.blue,
+                          onTap: () => {_loadTutorDetails(index)},
                           child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
                               child: Column(
-                            children: [
-                              Flexible(
-                                flex: 5,
-                                child: CachedNetworkImage(
-                                  imageUrl: CONSTANTS.server +
-                                      "/mytutor_mp_server/mobile/resources/courses/" +
-                                      tutorList[index].tutorId.toString() +
-                                      '.jpg',
-                                  height: screenHeight,
-                                  width: resWidth,
-                                  placeholder: (context, url) =>
-                                      const LinearProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                ),
-                              ),
-                              Text(
-                                tutorList[index].tutorName.toString(),
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              Flexible(
-                                  flex: 4,
-                                  child: Column(
-                                    children: [
-                                      Row(
+                                children: [
+                                  Flexible(
+                                    flex: 5,
+                                    child: CachedNetworkImage(
+                                      imageUrl: CONSTANTS.server +
+                                          "/mytutor_mp_server/mobile/resources/tutors/" +
+                                          tutorList[index].tutorId.toString() +
+                                          '.jpg',
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                        decoration: BoxDecoration(
+                                            border: const Border(
+                                              bottom: BorderSide(
+                                                  color: Colors.black),
+                                            ),
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.fitHeight,
+                                              colorFilter:
+                                                  const ColorFilter.mode(
+                                                      Colors.white,
+                                                      BlendMode.colorBurn),
+                                            )),
+                                      ),
+                                      placeholder: (context, url) =>
+                                          const LinearProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
+                                  ),
+                                  Text(
+                                    tutorList[index].tutorName.toString(),
+                                    style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    softWrap: true,
+                                  ),
+                                  Flexible(
+                                      flex: 4,
+                                      child: ListView(
                                         children: [
-                                          Expanded(
-                                            flex: 7,
-                                            child: Column(children: [
-                                              Text(
-                                                "\n Email: " +
-                                                    tutorList[index]
-                                                        .tutorEmail
-                                                        .toString(),
-                                                textAlign: TextAlign.left,
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              Expanded(
+                                                flex: 7,
+                                                child: Column(children: [
+                                                  Text(
+                                                    "\nEmail: " +
+                                                        tutorList[index]
+                                                            .tutorEmail
+                                                            .toString(),
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                  Text(
+                                                    "Phone: " +
+                                                        tutorList[index]
+                                                            .tutorPhone
+                                                            .toString(),
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                ]),
                                               ),
-                                              Text(
-                                                "\n Phone: " +
-                                                    tutorList[index]
-                                                        .tutorPhone
-                                                        .toString(),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            ]),
+                                            ],
                                           ),
                                         ],
-                                      ),
-                                    ],
-                                  ))
-                            ],
-                          )),
+                                      ))
+                                ],
+                              )),
                         );
                       }))),
               SizedBox(
@@ -174,12 +207,13 @@ class _TutorPageState extends State<TutorPage> {
             'Error', 408); // Request Timeout response status code
       },
     ).then((response) {
-      print(response.body);
       var data = jsonDecode(response.body);
 
+      print(data);
       if (response.statusCode == 200 && data['status'] == 'success') {
         var extractdata = data['data'];
         numofpage = int.parse(data['numofpage']);
+
         if (extractdata['tutors'] != null) {
           tutorList = <Tutor>[];
           extractdata['tutors'].forEach((v) {
@@ -192,31 +226,11 @@ class _TutorPageState extends State<TutorPage> {
         setState(() {});
       } else {
         //do something
+        titlecenter = "No Tutor Available";
+        tutorList.clear();
+        setState(() {});
       }
     });
-  }
-
-  _loadOptions() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            title: const Text(
-              "Please select",
-              style: TextStyle(),
-            ),
-            content: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(onPressed: _onLogin, child: const Text("Login")),
-                ElevatedButton(
-                    onPressed: _onRegister, child: const Text("Register")),
-              ],
-            ),
-          );
-        });
   }
 
   void _loadSearchDialog() {
@@ -229,7 +243,7 @@ class _TutorPageState extends State<TutorPage> {
             builder: (context, StateSetter setState) {
               return AlertDialog(
                 title: const Text(
-                  "Search ",
+                  "Search",
                 ),
                 content: SizedBox(
                   //height: screenHeight / 4,
@@ -242,15 +256,6 @@ class _TutorPageState extends State<TutorPage> {
                             labelText: 'Search',
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(5.0))),
-                      ),
-                      const SizedBox(height: 5),
-                      Container(
-                        height: 60,
-                        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(5.0))),
                       ),
                     ],
                   ),
@@ -285,43 +290,41 @@ class _TutorPageState extends State<TutorPage> {
             content: SingleChildScrollView(
                 child: Column(
               children: [
-                // CachedNetworkImage(
-                //   imageUrl: CONSTANTS.server +
-                //       "/mytutor_mp_server/mobile/resources/courses/" +
-                //       subjectList[index].subjectId.toString() +
-                //       '.png',
-                //   fit: BoxFit.cover,
-                //   width: resWidth,
-                //   placeholder: (context, url) =>
-                //       const LinearProgressIndicator(),
-                //   errorWidget: (context, url, error) => const Icon(Icons.error),
-                // ),
+                CachedNetworkImage(
+                  imageUrl: CONSTANTS.server +
+                      "/mytutor_mp_server/mobile/resources/tutors/" +
+                      tutorList[index].tutorId.toString() +
+                      '.jpg',
+                  fit: BoxFit.cover,
+                  width: resWidth,
+                  placeholder: (context, url) =>
+                      const LinearProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
                 Text(
                   tutorList[index].tutorName.toString(),
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text("Subject Description: \n" +
-                      tutorList[index].tutorDesc.toString()),
-                  Text("Email: \n" + tutorList[index].tutorEmail.toString()),
-                  Text("Phone: \n" + tutorList[index].tutorPhone.toString()),
-                  Text("Registered Date: \n" +
-                      tutorList[index].tutorDateReg.toString()),
+                  const Text(
+                    "\nAbout Me: ",
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                  Text(tutorList[index].tutorDesc.toString(),
+                      style: const TextStyle(fontSize: 12)),
+                  const Text(
+                    "\nRegistered Date: ",
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                      df.format(DateTime.parse(
+                          tutorList[index].tutorDateReg.toString())),
+                      style: const TextStyle(fontSize: 12)),
                 ]),
               ],
             )),
           );
         });
-  }
-
-  void _onLogin() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (content) => const LoginPage()));
-  }
-
-  void _onRegister() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (content) => const RegisterPage()));
   }
 }

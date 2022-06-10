@@ -11,8 +11,12 @@ $pageno = (int)$_POST['pageno'];
 $search = $_POST['search'];
 
 $page_first_result = ($pageno - 1) * $results_per_page;
+if($search == ""){
+    $sqlloadtutors = "SELECT * FROM tbl_tutors WHERE tutor_name LIKE '%$search%' ORDER BY tutor_id DESC";
+}else{
+    $sqlloadtutors  = "SELECT * FROM `tbl_tutors` ORDER BY `tbl_tutors`.`tutor_id` ASC";
+}
 
-$sqlloadtutors  = "SELECT * FROM `tbl_tutors` ORDER BY `tbl_tutors`.`tutor_id` ASC";
 
 $result = $conn->query($sqlloadtutors);
 $number_of_result = $result->num_rows;
@@ -32,7 +36,7 @@ if ($result->num_rows > 0) {
         $tutorlist['tutor_datereg'] = $row['tutor_datereg'];
         array_push($tutors["tutors"],$tutorlist);
     }
-    $response = array('status' => 'success', 'pageno'=>"$pageno",'numofpage'=>"$number_of_page", 'data' => $subjects);
+    $response = array('status' => 'success', 'pageno'=>"$pageno",'numofpage'=>"$number_of_page", 'data' => $tutors);
     sendJsonResponse($response);
 } else {
     $response = array('status' => 'failed', 'pageno'=>"$pageno",'numofpage'=>"$number_of_page", 'data' => null);
@@ -44,5 +48,3 @@ function sendJsonResponse($sentArray)
     header('Content-Type: application/json');
     echo json_encode($sentArray);
 }
-
-?>

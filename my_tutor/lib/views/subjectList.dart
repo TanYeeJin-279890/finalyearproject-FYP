@@ -9,7 +9,7 @@ import 'userlogin.dart';
 
 class subjectList extends StatefulWidget {
   //final Subject sub;
-  // const subjectList({Key? key, required this.sub}) : super(key: key);
+  const subjectList({Key? key}) : super(key: key);
 
   @override
   State<subjectList> createState() => _subjectListState();
@@ -22,7 +22,7 @@ class _subjectListState extends State<subjectList> {
   String search = "";
   late double screenHeight, screenWidth, resWidth;
 
-  int index = 1;
+  //int index = 1;
   //final df = DateFormat('dd/MM/yyyy hh:mm a');
   var numofpage, curpage = 1;
   var color;
@@ -47,6 +47,9 @@ class _subjectListState extends State<subjectList> {
 
     return Scaffold(
       appBar: AppBar(
+        title: const Text(
+          'Awesome Courses',
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -70,65 +73,119 @@ class _subjectListState extends State<subjectList> {
                       childAspectRatio: (1 / 1),
                       children: List.generate(subjectList.length, (index) {
                         return InkWell(
-                          splashColor: Colors.amber,
-                          onTap: () => {_loadSubjectDetails},
-                          child: Card(
-                              child: Column(
-                            children: [
-                              // Flexible(
-                              //   flex: 5,
-                              //   child: CachedNetworkImage(
-                              //     imageUrl: CONSTANTS.server +
-                              //         "/mytutor_mp_server/mobile/resources/courses/" +
-                              //         subjectList[index].subjectId.toString() +
-                              //         '.png',
-                              //     fit: BoxFit.fill,
-                              //     width: resWidth,
-                              //     placeholder: (context, url) =>
-                              //         const LinearProgressIndicator(),
-                              //     errorWidget: (context, url, error) =>
-                              //         const Icon(Icons.error),
-                              //   ),
-                              // ),
-                              Text(
-                                subjectList[index].subjectName.toString(),
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              Flexible(
-                                  flex: 4,
-                                  child: Column(
+                            splashColor: Colors.red,
+                            onTap: () => {_loadSubjectDetails(index)},
+                            child: Card(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Column(children: [
+                                  Flexible(
+                                    flex: 5,
+                                    child: CachedNetworkImage(
+                                      imageUrl: CONSTANTS.server +
+                                          "/mytutor_mp_server/mobile/resources/courses/" +
+                                          subjectList[index]
+                                              .subjectId
+                                              .toString() +
+                                          '.png',
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                        decoration: BoxDecoration(
+                                            border: const Border(
+                                              bottom: BorderSide(
+                                                  color: Colors.black),
+                                            ),
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.fitHeight,
+                                              colorFilter:
+                                                  const ColorFilter.mode(
+                                                      Colors.white,
+                                                      BlendMode.colorBurn),
+                                            )),
+                                      ),
+                                      placeholder: (context, url) =>
+                                          const LinearProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    subjectList[index].subjectName.toString(),
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    softWrap: true,
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Row(
                                     children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 7,
-                                            child: Column(children: [
-                                              Text("RM " +
-                                                  double.parse(
-                                                          subjectList[index]
-                                                              .subjectPrice
-                                                              .toString())
-                                                      .toStringAsFixed(2)),
-                                              Text(subjectList[index]
-                                                      .subjectSessions
-                                                      .toString() +
-                                                  " sessions"),
-                                            ]),
+                                      Expanded(
+                                        flex: 5,
+                                        child: Text(
+                                          "Rating: " +
+                                              subjectList[index]
+                                                  .subjectRating
+                                                  .toString(),
+                                          textScaleFactor: 1,
+                                          style: const TextStyle(
+                                            fontSize: 14,
                                           ),
-                                          Expanded(
-                                              flex: 3,
-                                              child: IconButton(
-                                                  onPressed: () {},
-                                                  icon: const Icon(
-                                                      Icons.shopping_cart))),
-                                        ],
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 5,
+                                        child: Text(
+                                          "Price: RM" +
+                                              subjectList[index]
+                                                  .subjectPrice
+                                                  .toString(),
+                                          textScaleFactor: 1,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
                                       ),
                                     ],
-                                  ))
-                            ],
-                          )),
-                        );
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 5,
+                                        child: Text(
+                                          "Session: " +
+                                              subjectList[index]
+                                                  .subjectSessions
+                                                  .toString(),
+                                          textScaleFactor: 1,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+                                      Expanded(
+                                          flex: 3,
+                                          child: IconButton(
+                                              onPressed: () {},
+                                              icon: const Icon(
+                                                  Icons.shopping_cart))),
+                                    ],
+                                  ),
+                                ])));
                       }))),
               SizedBox(
                 height: 30,
@@ -197,29 +254,6 @@ class _subjectListState extends State<subjectList> {
     });
   }
 
-  _loadOptions() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            title: const Text(
-              "Please select",
-              style: TextStyle(),
-            ),
-            content: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(onPressed: _onLogin, child: const Text("Login")),
-                ElevatedButton(
-                    onPressed: _onRegister, child: const Text("Register")),
-              ],
-            ),
-          );
-        });
-  }
-
   void _loadSearchDialog() {
     searchController.text = "";
     showDialog(
@@ -280,53 +314,43 @@ class _subjectListState extends State<subjectList> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: const Text(
-              "Product Details",
+              "Courses Details",
               style: TextStyle(),
             ),
             content: SingleChildScrollView(
                 child: Column(
               children: [
-                // CachedNetworkImage(
-                //   imageUrl: CONSTANTS.server +
-                //       "/mytutor_mp_server/mobile/resources/courses/" +
-                //       subjectList[index].subjectId.toString() +
-                //       '.png',
-                //   fit: BoxFit.cover,
-                //   width: resWidth,
-                //   placeholder: (context, url) =>
-                //       const LinearProgressIndicator(),
-                //   errorWidget: (context, url, error) => const Icon(Icons.error),
-                // ),
+                CachedNetworkImage(
+                  imageUrl: CONSTANTS.server +
+                      "/mytutor_mp_server/mobile/resources/courses/" +
+                      subjectList[index].subjectId.toString() +
+                      '.png',
+                  fit: BoxFit.cover,
+                  width: resWidth,
+                  placeholder: (context, url) =>
+                      const LinearProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
                 Text(
                   subjectList[index].subjectName.toString(),
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text("Subject Description: \n" +
+                  Text("\nSubject Description: \n" +
                       subjectList[index].subjectDescription.toString()),
-                  Text("Price: RM " +
+                  Text("\nPrice: RM " +
                       double.parse(subjectList[index].subjectPrice.toString())
                           .toStringAsFixed(2)),
-                  Text("Total Sessions: " +
+                  Text("\nTotal Sessions: " +
                       subjectList[index].subjectSessions.toString() +
-                      " units"),
-                  Text("Ratings: " +
+                      " classes"),
+                  Text("\nRatings: " +
                       subjectList[index].subjectRating.toString()),
                 ]),
               ],
             )),
           );
         });
-  }
-
-  void _onLogin() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (content) => const LoginPage()));
-  }
-
-  void _onRegister() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (content) => const RegisterPage()));
   }
 }
