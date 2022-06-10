@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
   final List<Widget> _functions = <Widget>[
     subjectList(),
-    TutorPage(),
+    const TutorPage(),
     const Text(
       'Subscribe',
       style: optionStyle,
