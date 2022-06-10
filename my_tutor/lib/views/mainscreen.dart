@@ -1,13 +1,7 @@
-import 'dart:convert';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import '../constant.dart';
 import '../models/reg.dart';
+import 'subjectList.dart';
 import 'tutor.dart';
-import 'user_registration.dart';
-import 'userlogin.dart';
-import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
 class MainScreen extends StatefulWidget {
   final Registration reg;
@@ -18,45 +12,24 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  List subjectlist = [];
-  String titlecenter = "Loading...";
-  TextEditingController searchController = TextEditingController();
-  String search = "";
-  late double screenHeight, screenWidth, resWidth;
   int _selectIdx = 0;
-  //final df = DateFormat('dd/MM/yyyy hh:mm a');
-  var numofpage, curpage = 1;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProducts(1, search, "All");
-  }
+  late double screenHeight, screenWidth, resWidth;
 
   static const TextStyle optionStyle =
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
   final List<Widget> _functions = <Widget>[
-    Container(
-      padding: const EdgeInsets.all(20),
-      alignment: Alignment.topCenter,
-      child: const SizedBox(
-        child: Text(
-          'Subject Provides',
-          style: optionStyle,
-        ),
-      ),
-    ),
+    subjectList(),
     TutorPage(),
     const Text(
-      'Index 2: School',
+      'Subscribe',
       style: optionStyle,
     ),
     const Text(
-      'Index 3: Settings',
+      'Favourite',
       style: optionStyle,
     ),
     const Text(
-      'Index 4: Settings',
+      'Profile',
       style: optionStyle,
     ),
   ];
@@ -79,54 +52,9 @@ class _MainScreenState extends State<MainScreen> {
       //rowcount = 3;
     }
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Awesome My Tutors'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              _loadSearchDialog();
-            },
-          ),
-        ],
+      body: Center(
+        child: _functions.elementAt(_selectIdx),
       ),
-      body: subjectlist.isEmpty
-          ? Center(
-              child: _functions.elementAt(_selectIdx),
-            )
-          : Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text("Your Current Products",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ),
-                
-                Expanded(
-child: GestureDetector(
-child: GridView.count(
-crossAxisCount: 2,
-children: List.generate(subjectlist.length, (index) {
-return Card(
-child: Column(
-children: [
-Flexible(flex: 6,
-child: CachedNetworkImage(
-width: screenWidth,
-fit: BoxFit.cover,
-imageUrl: CONSTANTS.server +
-"/mytutor_mp_server/mobile/resources/courses/" +
-subjectlist[index]['subid'] +
-".png",
-placeholder: (context, url) =>
-const LinearProgressIndicator(),
-errorWidget: (context, url, error) =>
-const Icon(Icons.error),
-),),),),}),
-),
-],
-),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -160,106 +88,5 @@ const Icon(Icons.error),
         onTap: _onTapped,
       ),
     );
-  }
-
-  void _loadProducts(int pageno, String _search, String _type) {
-    curpage = pageno;
-    numofpage ?? 1;
-    //ProgressDialog pd = ProgressDialog(context: context);
-    //pd.show(msg: 'Loading...', max: 100);
-    http.post(
-        Uri.parse(CONSTANTS.server + "/my_tutor/mobile/php/loadsubject.php"),
-        body: {
-          'pageno': pageno.toString(),
-          'search': _search,
-          'type': _type,
-        }).then((response) {
-      print(response.body);
-    });
-  }
-
-  _loadOptions() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            title: const Text(
-              "Please select",
-              style: TextStyle(),
-            ),
-            content: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(onPressed: _onLogin, child: const Text("Login")),
-                ElevatedButton(
-                    onPressed: _onRegister, child: const Text("Register")),
-              ],
-            ),
-          );
-        });
-  }
-
-  void _loadSearchDialog() {
-    searchController.text = "";
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          // return object of type Dialog
-          return StatefulBuilder(
-            builder: (context, StateSetter setState) {
-              return AlertDialog(
-                title: const Text(
-                  "Search ",
-                ),
-                content: SizedBox(
-                  //height: screenHeight / 4,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: searchController,
-                        decoration: InputDecoration(
-                            labelText: 'Search',
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0))),
-                      ),
-                      const SizedBox(height: 5),
-                      Container(
-                        height: 60,
-                        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(5.0))),
-                      ),
-                    ],
-                  ),
-                ),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () {
-                      search = searchController.text;
-                      Navigator.of(context).pop();
-                      _loadProducts(1, search, "All");
-                    },
-                    child: const Text("Search"),
-                  )
-                ],
-              );
-            },
-          );
-        });
-  }
-
-  void _onLogin() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (content) => const LoginPage()));
-  }
-
-  void _onRegister() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (content) => const RegisterPage()));
   }
 }

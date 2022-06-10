@@ -12,26 +12,25 @@ $search = $_POST['search'];
 
 $page_first_result = ($pageno - 1) * $results_per_page;
 
-$sqlloadsubjects  = "SELECT * FROM `tbl_subjects` ORDER BY `tbl_subjects`.`subject_id` ASC";
+$sqlloadtutors  = "SELECT * FROM `tbl_tutors` ORDER BY `tbl_tutors`.`tutor_id` ASC";
 
-$result = $conn->query($sqlloadsubjects);
+$result = $conn->query($sqlloadtutors);
 $number_of_result = $result->num_rows;
 $number_of_page = ceil($number_of_result / $results_per_page);
-$sqlloadsubjects = $sqlloadsubjects . " LIMIT $page_first_result , $results_per_page";
-$result = $conn->query($sqlloadsubjects);
+$sqlloadtutors = $sqlloadtutors . " LIMIT $page_first_result , $results_per_page";
+$result = $conn->query($sqlloadtutors);
 
 if ($result->num_rows > 0) {
-    $subjects["subjects"] = array();
+    $tutors["tutors"] = array();
     while ($row = $result->fetch_assoc()) {
-        $subjectlist = array();
-        $subjectlist['subject_id'] = $row['subject_id'];
-        $subjectlist['subject_name'] = $row['subject_name'];
-        $subjectlist['subject_description'] = $row['subject_description'];
-        $subjectlist['subject_price'] = $row['subject_price'];
-        $subjectlist['tutor_id'] = $row['tutor_id'];
-        $subjectlist['subject_sessions'] = $row['subject_sessions'];
-        $subjectlist['subject_rating'] = $row['subject_rating'];
-        array_push($subjects["subjects"],$subjectlist);
+        $tutorlist = array();
+        $tutorlist['tutor_id'] = $row['tutor_id'];
+        $tutorlist['tutor_email'] = $row['tutor_email'];
+        $tutorlist['tutor_phone'] = $row['tutor_phone'];
+        $tutorlist['tutor_name'] = $row['tutor_name'];
+        $tutorlist['tutor_description'] = $row['tutor_description'];
+        $tutorlist['tutor_datereg'] = $row['tutor_datereg'];
+        array_push($tutors["tutors"],$tutorlist);
     }
     $response = array('status' => 'success', 'pageno'=>"$pageno",'numofpage'=>"$number_of_page", 'data' => $subjects);
     sendJsonResponse($response);

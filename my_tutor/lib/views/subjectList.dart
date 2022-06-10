@@ -1,22 +1,22 @@
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import '../constant.dart';
-import '../models/tutor.dart';
+import 'package:my_tutor/constant.dart';
+import '../models/subject.dart';
 import 'user_registration.dart';
 import 'userlogin.dart';
 
-class TutorPage extends StatefulWidget {
-  //final Tutor tutor;
-  const TutorPage({Key? key}) : super(key: key);
+class subjectList extends StatefulWidget {
+  //final Subject sub;
+  // const subjectList({Key? key, required this.sub}) : super(key: key);
 
   @override
-  State<TutorPage> createState() => _TutorPageState();
+  State<subjectList> createState() => _subjectListState();
 }
 
-class _TutorPageState extends State<TutorPage> {
-  List<Tutor> tutorList = <Tutor>[];
+class _subjectListState extends State<subjectList> {
+  List<Subject> subjectList = <Subject>[];
   String titlecenter = "Loading...";
   TextEditingController searchController = TextEditingController();
   String search = "";
@@ -30,7 +30,7 @@ class _TutorPageState extends State<TutorPage> {
   @override
   void initState() {
     super.initState();
-    _loadTutors(1, search);
+    _loadSubjects(1, search);
   }
 
   @override
@@ -47,7 +47,6 @@ class _TutorPageState extends State<TutorPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -57,7 +56,7 @@ class _TutorPageState extends State<TutorPage> {
           ),
         ],
       ),
-      body: tutorList.isEmpty
+      body: subjectList.isEmpty
           ? const Padding(
               padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
             )
@@ -69,30 +68,30 @@ class _TutorPageState extends State<TutorPage> {
                   child: GridView.count(
                       crossAxisCount: 2,
                       childAspectRatio: (1 / 1),
-                      children: List.generate(tutorList.length, (index) {
+                      children: List.generate(subjectList.length, (index) {
                         return InkWell(
                           splashColor: Colors.amber,
-                          onTap: () => {_loadTutorDetails},
+                          onTap: () => {_loadSubjectDetails},
                           child: Card(
                               child: Column(
                             children: [
-                              Flexible(
-                                flex: 5,
-                                child: CachedNetworkImage(
-                                  imageUrl: CONSTANTS.server +
-                                      "/mytutor_mp_server/mobile/resources/courses/" +
-                                      tutorList[index].tutorId.toString() +
-                                      '.jpg',
-                                  height: screenHeight,
-                                  width: resWidth,
-                                  placeholder: (context, url) =>
-                                      const LinearProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                ),
-                              ),
+                              // Flexible(
+                              //   flex: 5,
+                              //   child: CachedNetworkImage(
+                              //     imageUrl: CONSTANTS.server +
+                              //         "/mytutor_mp_server/mobile/resources/courses/" +
+                              //         subjectList[index].subjectId.toString() +
+                              //         '.png',
+                              //     fit: BoxFit.fill,
+                              //     width: resWidth,
+                              //     placeholder: (context, url) =>
+                              //         const LinearProgressIndicator(),
+                              //     errorWidget: (context, url, error) =>
+                              //         const Icon(Icons.error),
+                              //   ),
+                              // ),
                               Text(
-                                tutorList[index].tutorName.toString(),
+                                subjectList[index].subjectName.toString(),
                                 style: const TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold),
                               ),
@@ -105,22 +104,24 @@ class _TutorPageState extends State<TutorPage> {
                                           Expanded(
                                             flex: 7,
                                             child: Column(children: [
-                                              Text(
-                                                "\n Email: " +
-                                                    tutorList[index]
-                                                        .tutorEmail
-                                                        .toString(),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                              Text(
-                                                "\n Phone: " +
-                                                    tutorList[index]
-                                                        .tutorPhone
-                                                        .toString(),
-                                                textAlign: TextAlign.left,
-                                              ),
+                                              Text("RM " +
+                                                  double.parse(
+                                                          subjectList[index]
+                                                              .subjectPrice
+                                                              .toString())
+                                                      .toStringAsFixed(2)),
+                                              Text(subjectList[index]
+                                                      .subjectSessions
+                                                      .toString() +
+                                                  " sessions"),
                                             ]),
                                           ),
+                                          Expanded(
+                                              flex: 3,
+                                              child: IconButton(
+                                                  onPressed: () {},
+                                                  icon: const Icon(
+                                                      Icons.shopping_cart))),
                                         ],
                                       ),
                                     ],
@@ -144,7 +145,7 @@ class _TutorPageState extends State<TutorPage> {
                     return SizedBox(
                       width: 40,
                       child: TextButton(
-                          onPressed: () => {_loadTutors(index + 1, "")},
+                          onPressed: () => {_loadSubjects(index + 1, "")},
                           child: Text(
                             (index + 1).toString(),
                             style: TextStyle(color: color),
@@ -157,12 +158,12 @@ class _TutorPageState extends State<TutorPage> {
     );
   }
 
-  void _loadTutors(int pageno, String _search) {
+  void _loadSubjects(int pageno, String _search) {
     curpage = pageno;
     numofpage ?? 1;
     http.post(
-        Uri.parse(
-            CONSTANTS.server + "/mytutor_mp_server/mobile/php/load_tutor.php"),
+        Uri.parse(CONSTANTS.server +
+            "/mytutor_mp_server/mobile/php/load_subject.php"),
         body: {
           'pageno': pageno.toString(),
           'search': _search,
@@ -180,14 +181,14 @@ class _TutorPageState extends State<TutorPage> {
       if (response.statusCode == 200 && data['status'] == 'success') {
         var extractdata = data['data'];
         numofpage = int.parse(data['numofpage']);
-        if (extractdata['tutors'] != null) {
-          tutorList = <Tutor>[];
-          extractdata['tutors'].forEach((v) {
-            tutorList.add(Tutor.fromJson(v));
+        if (extractdata['subjects'] != null) {
+          subjectList = <Subject>[];
+          extractdata['subjects'].forEach((v) {
+            subjectList.add(Subject.fromJson(v));
           });
-          titlecenter = tutorList.length.toString() + " Tutors Available";
+          titlecenter = subjectList.length.toString() + " Subjects Available";
         } else {
-          titlecenter = "No Tutor Available";
+          titlecenter = "No Subject Available";
         }
         setState(() {});
       } else {
@@ -260,7 +261,7 @@ class _TutorPageState extends State<TutorPage> {
                     onPressed: () {
                       search = searchController.text;
                       Navigator.of(context).pop();
-                      _loadTutors(1, search);
+                      _loadSubjects(1, search);
                     },
                     child: const Text("Search"),
                   )
@@ -271,7 +272,7 @@ class _TutorPageState extends State<TutorPage> {
         });
   }
 
-  _loadTutorDetails(int index) {
+  _loadSubjectDetails(int index) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -279,7 +280,7 @@ class _TutorPageState extends State<TutorPage> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: const Text(
-              "Tutor Details",
+              "Product Details",
               style: TextStyle(),
             ),
             content: SingleChildScrollView(
@@ -297,17 +298,21 @@ class _TutorPageState extends State<TutorPage> {
                 //   errorWidget: (context, url, error) => const Icon(Icons.error),
                 // ),
                 Text(
-                  tutorList[index].tutorName.toString(),
+                  subjectList[index].subjectName.toString(),
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text("Subject Description: \n" +
-                      tutorList[index].tutorDesc.toString()),
-                  Text("Email: \n" + tutorList[index].tutorEmail.toString()),
-                  Text("Phone: \n" + tutorList[index].tutorPhone.toString()),
-                  Text("Registered Date: \n" +
-                      tutorList[index].tutorDateReg.toString()),
+                      subjectList[index].subjectDescription.toString()),
+                  Text("Price: RM " +
+                      double.parse(subjectList[index].subjectPrice.toString())
+                          .toStringAsFixed(2)),
+                  Text("Total Sessions: " +
+                      subjectList[index].subjectSessions.toString() +
+                      " units"),
+                  Text("Ratings: " +
+                      subjectList[index].subjectRating.toString()),
                 ]),
               ],
             )),
