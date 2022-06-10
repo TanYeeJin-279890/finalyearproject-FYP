@@ -4,8 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:my_tutor/constant.dart';
 import '../models/subject.dart';
-import 'user_registration.dart';
-import 'userlogin.dart';
 
 class subjectList extends StatefulWidget {
   //final Subject sub;
