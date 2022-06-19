@@ -231,11 +231,11 @@ class _subjectListState extends State<subjectList> {
       },
     ).then((response) {
       print(response.body);
-      var data = jsonDecode(response.body);
+      var jsondata = jsonDecode(response.body);
 
-      if (response.statusCode == 200 && data['status'] == 'success') {
-        var extractdata = data['data'];
-        numofpage = int.parse(data['numofpage']);
+      if (response.statusCode == 200 && jsondata['status'] == 'success') {
+        var extractdata = jsondata['data'];
+        numofpage = int.parse(jsondata['numofpage']);
         if (extractdata['subjects'] != null) {
           subjectList = <Subject>[];
           extractdata['subjects'].forEach((v) {
@@ -244,10 +244,13 @@ class _subjectListState extends State<subjectList> {
           titlecenter = subjectList.length.toString() + " Subjects Available";
         } else {
           titlecenter = "No Subject Available";
+          subjectList.clear();
         }
         setState(() {});
       } else {
-        //do something
+        titlecenter = "No Subject Available";
+        subjectList.clear();
+        setState(() {});
       }
     });
   }
@@ -272,18 +275,9 @@ class _subjectListState extends State<subjectList> {
                       TextField(
                         controller: searchController,
                         decoration: InputDecoration(
-                            labelText: 'Search',
+                            labelText: 'Search your intended subjects name',
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(5.0))),
-                      ),
-                      const SizedBox(height: 5),
-                      Container(
-                        height: 60,
-                        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(5.0))),
                       ),
                     ],
                   ),
