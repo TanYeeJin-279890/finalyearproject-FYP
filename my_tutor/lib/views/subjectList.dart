@@ -5,30 +5,30 @@ import 'package:flutter/material.dart';
 import 'package:my_tutor/constant.dart';
 import '../models/subject.dart';
 
-class subjectList extends StatefulWidget {
+class SubjectList extends StatefulWidget {
   //final Subject sub;
-  const subjectList({Key? key}) : super(key: key);
+  const SubjectList({Key? key}) : super(key: key);
 
   @override
-  State<subjectList> createState() => _subjectListState();
+  State<SubjectList> createState() => _SubjectListState();
 }
 
-class _subjectListState extends State<subjectList> {
+class _SubjectListState extends State<SubjectList> {
   List<Subject> subjectList = <Subject>[];
   String titlecenter = "Loading...";
-  TextEditingController searchController = TextEditingController();
-  String search = "";
-  late double screenHeight, screenWidth, resWidth;
 
-  //int index = 1;
-  //final df = DateFormat('dd/MM/yyyy hh:mm a');
+  late double screenHeight, screenWidth, resWidth;
   var numofpage, curpage = 1;
   var color;
+  TextEditingController searchController = TextEditingController();
+  String search = "";
 
   @override
   void initState() {
     super.initState();
-    _loadSubjects(1, search);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _loadSubjects(1, search);
+    });
   }
 
   @override
@@ -256,7 +256,6 @@ class _subjectListState extends State<subjectList> {
   }
 
   void _loadSearchDialog() {
-    searchController.text = "";
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -268,7 +267,6 @@ class _subjectListState extends State<subjectList> {
                   "Search ",
                 ),
                 content: SizedBox(
-                  //height: screenHeight / 4,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

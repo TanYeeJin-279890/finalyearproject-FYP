@@ -7,12 +7,13 @@ if (!isset($_POST)) {
 
 include_once("dbconnect.php");
 $results_per_page = 5;
+//receive data for post array
 $pageno = (int)$_POST['pageno'];
-$search = $_POST['_search'];
+$search = $_POST['search'];
 
 $page_first_result = ($pageno - 1) * $results_per_page;
 
-$sqlloadsubjects = "SELECT * FROM `tbl_subjects` WHERE `subject_name` LIKE '%$search%' ORDER BY `tbl_subjects`.`subject_id` ASC";   
+$sqlloadsubjects = "SELECT * FROM tbl_subjects WHERE subject_name LIKE '%$search%'";   
 
 $result = $conn->query($sqlloadsubjects);
 $number_of_result = $result->num_rows;

@@ -18,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
   final List<Widget> _functions = <Widget>[
-    subjectList(),
+    SubjectList(),
     const TutorPage(),
     const Text(
       'Subscribe',

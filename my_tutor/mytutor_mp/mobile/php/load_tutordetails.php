@@ -8,8 +8,6 @@ if (!isset($_POST)) {
 include_once("dbconnect.php");
 $sqlloaddetails = "SELECT tbl_tutors.tutor_id, tbl_tutors.tutor_email, tbl_tutors.tutor_phone, tbl_tutors.tutor_name, tbl_tutors.tutor_description, tbl_tutors.tutor_datereg, tbl_subjects.subject_name FROM tbl_tutors INNER JOIN tbl_subjects ON tbl_subject.tutor_id = tbl_tutors.tutor_id";
 
-//INSERT INTO `tbl_tutors`(`tutor_id`, `tutor_email`, `tutor_phone`, `tutor_name`, `tutor_password`, `tutor_description`, `tutor_datereg`) VALUES ('[value-1]','[value-2]','[value-3]','[value-4]','[value-5]','[value-6]','[value-7]')
-
 
 $result = $conn->query($sqlloaddetails);
 $number_of_result = $result->num_rows;

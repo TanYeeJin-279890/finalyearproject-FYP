@@ -4,10 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../constant.dart';
-import '../models/TutorDetails.dart';
+import '../models/tutorDetails.dart';
 import '../models/tutor.dart';
-import 'user_registration.dart';
-import 'userlogin.dart';
 
 class TutorPage extends StatefulWidget {
   //final Tutor tutor;
@@ -23,8 +21,6 @@ class _TutorPageState extends State<TutorPage> {
   TextEditingController searchController = TextEditingController();
   String search = "";
   late double screenHeight, screenWidth, resWidth;
-
-  //int index = 1;
   final df = DateFormat.yMd();
   var numofpage, curpage = 1;
   var color;
@@ -32,7 +28,9 @@ class _TutorPageState extends State<TutorPage> {
   @override
   void initState() {
     super.initState();
-    _loadTutors(1, search);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _loadTutors(1, search);
+    });
   }
 
   @override
@@ -77,7 +75,7 @@ class _TutorPageState extends State<TutorPage> {
                       children: List.generate(tutorList.length, (index) {
                         return InkWell(
                           splashColor: Colors.blue,
-                          onTap: () => {_TutorDetails(index + 1)},
+                          onTap: () => {_loadTutorDetails(index)},
                           child: Card(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0),
@@ -277,86 +275,61 @@ class _TutorPageState extends State<TutorPage> {
         });
   }
 
-  _TutorDetails(int index) {
-    List<TutorDetails> tdList = <TutorDetails>[];
-    http.post(
-        Uri.parse(
-            CONSTANTS.server + "/slumshop/mobile/php/load_tutordetails.php"),
-        body: {'index': index.toString()}).timeout(
-      const Duration(seconds: 5),
-      onTimeout: () {
-        return http.Response(
-            'Error', 408); // Request Timeout response status code
-      },
-    ).then((response) {
-      print(response.body);
-    });
-  }
-
-  _loadTutorDetails(List<TutorDetails> tdList) {
+  _loadTutorDetails(int index) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              title: const Text(
-                "Tutor Details",
-                style: TextStyle(),
-              ),
-              content: SizedBox(
-                  width: screenWidth,
-                  height: screenHeight,
-                  child: GridView.count(
-                    crossAxisCount: 1,
-                    childAspectRatio: (1 / 0.25),
-                    children: List.generate(tdList.length, (index) {
-                      return Card(
-                          child: Column(
-                        children: [
-                          CachedNetworkImage(
-                            imageUrl: CONSTANTS.server +
-                                "/mytutor_mp_server/mobile/resources/tutors/" +
-                                tdList[index].tutorId.toString() +
-                                '.jpg',
-                            fit: BoxFit.cover,
-                            width: resWidth,
-                            placeholder: (context, url) =>
-                                const LinearProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
-                          ),
-                          Text(
-                            tutorList[index].tutorName.toString(),
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "\nAbout Me: ",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(tdList[index].tutorDesc.toString(),
-                                    style: const TextStyle(fontSize: 12)),
-                                const Text(
-                                  "\nRegistered Date: ",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                    df.format(DateTime.parse(
-                                        tdList[index].tutorDateReg.toString())),
-                                    style: const TextStyle(fontSize: 12)),
-                              ]),
-                        ],
-                      ));
-                    }),
-                  )));
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: const Text(
+              "Tutor Details",
+              style: TextStyle(),
+            ),
+            content: SizedBox(
+                child: Column(
+              children: [
+                CachedNetworkImage(
+                  imageUrl: CONSTANTS.server +
+                      "/mytutor_mp_server/mobile/resources/tutors/" +
+                      tutorList[index].tutorId.toString() +
+                      '.jpg',
+                  fit: BoxFit.cover,
+                  width: resWidth,
+                  placeholder: (context, url) =>
+                      const LinearProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+                Text(
+                  tutorList[index].tutorName.toString(),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Text(
+                    "\nAbout Me: ",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(tutorList[index].tutorDesc.toString(),
+                      style: const TextStyle(fontSize: 16)),
+                  const Text(
+                    "\nRegistered Date: ",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                      df.format(DateTime.parse(
+                          tutorList[index].tutorDateReg.toString())),
+                      style: const TextStyle(fontSize: 16)),
+                  const Text(
+                    "\nSubject Handle: ",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(tutorList[index].subjectshandle.toString(),
+                      style: const TextStyle(fontSize: 16)),
+                ]),
+              ],
+            )),
+          );
         });
   }
 }

@@ -11,11 +11,12 @@ $pageno = (int)$_POST['pageno'];
 $search = $_POST['search'];
 
 $page_first_result = ($pageno - 1) * $results_per_page;
-if($search == ""){
-    $sqlloadtutors = "SELECT * FROM tbl_tutors WHERE tutor_name LIKE '%$search%' ORDER BY tutor_id DESC";
-}else{
-    $sqlloadtutors  = "SELECT * FROM `tbl_tutors` ORDER BY `tbl_tutors`.`tutor_id` ASC";
-}
+$sqlloadtutors = "SELECT tbl_tutors.tutor_id, tbl_tutors.tutor_email, 
+    tbl_tutors.tutor_phone, tbl_tutors.tutor_name, tbl_tutors.tutor_description, 
+    tbl_tutors.tutor_datereg, group_concat(Distinct tbl_subjects.subject_name SEPARATOR'\n') AS `subjects_handle` FROM tbl_tutors 
+    INNER JOIN tbl_subjects ON tbl_subjects.tutor_id = tbl_tutors.tutor_id
+    GROUP BY tbl_tutors.tutor_id
+    ORDER BY tbl_tutors.tutor_id ASC";
 
 
 $result = $conn->query($sqlloadtutors);
@@ -34,6 +35,7 @@ if ($result->num_rows > 0) {
         $tutorlist['tutor_name'] = $row['tutor_name'];
         $tutorlist['tutor_description'] = $row['tutor_description'];
         $tutorlist['tutor_datereg'] = $row['tutor_datereg'];
+        $tutorlist['subjects_handle'] = $row['subjects_handle'];
         array_push($tutors["tutors"],$tutorlist);
     }
     $response = array('status' => 'success', 'pageno'=>"$pageno",'numofpage'=>"$number_of_page", 'data' => $tutors);
