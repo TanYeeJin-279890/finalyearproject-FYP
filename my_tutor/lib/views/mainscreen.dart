@@ -13,26 +13,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectIdx = 0;
-  late double screenHeight, screenWidth, resWidth;
-
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
-  final List<Widget> _functions = <Widget>[
-    SubjectList(),
-    const TutorPage(),
-    const Text(
-      'Subscribe',
-      style: optionStyle,
-    ),
-    const Text(
-      'Favourite',
-      style: optionStyle,
-    ),
-    const Text(
-      'Profile',
-      style: optionStyle,
-    ),
-  ];
+  late List<Widget> _pages;
 
   void _onTapped(int index) {
     setState(() {
@@ -41,19 +22,28 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _pages = <Widget>[
+      SubjectList(reg: widget.reg),
+      const TutorPage(),
+      const Text(
+        'Subscribe',
+      ),
+      const Text(
+        'Favourite',
+      ),
+      const Text(
+        'Profile',
+      ),
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
-    if (screenWidth <= 600) {
-      resWidth = screenWidth;
-      //rowcount = 2;
-    } else {
-      resWidth = screenWidth * 0.75;
-      //rowcount = 3;
-    }
     return Scaffold(
       body: Center(
-        child: _functions.elementAt(_selectIdx),
+        child: _pages.elementAt(_selectIdx),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

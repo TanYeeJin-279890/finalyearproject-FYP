@@ -1,13 +1,19 @@
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:my_tutor/constant.dart';
+import 'package:my_tutor/models/reg.dart';
 import '../models/subject.dart';
+import 'cartscreen.dart';
+import 'user_registration.dart';
+import 'userlogin.dart';
 
 class SubjectList extends StatefulWidget {
-  //final Subject sub;
-  const SubjectList({Key? key}) : super(key: key);
+  final Registration reg;
+
+  const SubjectList({Key? key, required this.reg}) : super(key: key);
 
   @override
   State<SubjectList> createState() => _SubjectListState();
@@ -54,6 +60,28 @@ class _SubjectListState extends State<SubjectList> {
             onPressed: () {
               _loadSearchDialog();
             },
+          ),
+          TextButton.icon(
+            onPressed: () async {
+              if (widget.reg.email == "guest@slumberjer.com") {
+                _loadOptions();
+              } else {
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) => CartScreen(
+                              reg: widget.reg,
+                            )));
+                _loadSubjects(1, search);
+                _loadMyCart();
+              }
+            },
+            icon: const Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+            ),
+            label: Text(widget.reg.cart.toString(),
+                style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -178,7 +206,9 @@ class _SubjectListState extends State<SubjectList> {
                                       Expanded(
                                           flex: 3,
                                           child: IconButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                _addtocartDialog(index);
+                                              },
                                               icon: const Icon(
                                                   Icons.shopping_cart))),
                                     ],
@@ -342,5 +372,104 @@ class _SubjectListState extends State<SubjectList> {
             )),
           );
         });
+  }
+
+  _loadOptions() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: const Text(
+              "Please select",
+              style: TextStyle(),
+            ),
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(onPressed: _onLogin, child: const Text("Login")),
+                ElevatedButton(
+                    onPressed: _onRegister, child: const Text("Register")),
+              ],
+            ),
+          );
+        });
+  }
+
+  _addtocartDialog(int index) {
+    if (widget.reg.email == "guest@slumberjer.com") {
+      _loadOptions();
+    } else {
+      _addtoCart(index);
+    }
+  }
+
+  void _onLogin() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (content) => const LoginPage()));
+  }
+
+  void _onRegister() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (content) => const RegisterPage()));
+  }
+
+  void _loadMyCart() {
+    if (widget.reg.email != "guest@slumberjer.com") {
+      http.post(
+          Uri.parse(CONSTANTS.server +
+              "/mytutor_mp_server/mobile/php/load_cartqty.php"),
+          body: {
+            "email": widget.reg.email.toString(),
+          }).timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          return http.Response(
+              'Error', 408); // Request Timeout response status code
+        },
+      ).then((response) {
+        print(response.body);
+        var jsondata = jsonDecode(response.body);
+        if (response.statusCode == 200 && jsondata['status'] == 'success') {
+          print(jsondata['data']['carttotal'].toString());
+          setState(() {
+            widget.reg.cart = jsondata['data']['carttotal'].toString();
+          });
+        }
+      });
+    }
+  }
+
+  void _addtoCart(int index) {
+    http.post(
+        Uri.parse(
+            CONSTANTS.server + "/mytutor_mp_server/mobile/php/insert_cart.php"),
+        body: {
+          "email": widget.reg.email.toString(),
+          "subid": subjectList[index].subjectId.toString(),
+        }).timeout(
+      const Duration(seconds: 5),
+      onTimeout: () {
+        return http.Response(
+            'Error', 408); // Request Timeout response status code
+      },
+    ).then((response) {
+      print(response.body);
+      var jsondata = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && jsondata['status'] == 'success') {
+        print(jsondata['data']['carttotal'].toString());
+        setState(() {
+          widget.reg.cart = jsondata['data']['carttotal'].toString();
+        });
+        Fluttertoast.showToast(
+            msg: "Success",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 16.0);
+      }
+    });
   }
 }

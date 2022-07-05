@@ -6,6 +6,7 @@ class Registration {
   String? phone;
   String? address;
   String? datereg;
+  String? cart;
 
   Registration(
       {this.id,
@@ -14,7 +15,8 @@ class Registration {
       this.password,
       this.phone,
       this.address,
-      datereg});
+      this.datereg,
+      this.cart});
 
   Registration.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -24,6 +26,7 @@ class Registration {
     phone = json['phone'];
     address = json['address'];
     datereg = json['datereg'];
+    cart = json['cart'].toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -35,6 +38,7 @@ class Registration {
     data['phone'] = phone;
     data['address'] = address;
     data['datereg'] = datereg;
+    data['cart'] = cart.toString();
     return data;
   }
 }
