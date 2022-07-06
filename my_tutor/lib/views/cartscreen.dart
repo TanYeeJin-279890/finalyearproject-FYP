@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import '../constant.dart';
 import '../models/cart.dart';
 import '../models/reg.dart';
+import 'paymentscreen.dart';
 
 class CartScreen extends StatefulWidget {
   final Registration reg;
@@ -229,11 +230,11 @@ class _CartScreenState extends State<CartScreen> {
               ),
               onPressed: () async {
                 Navigator.of(context).pop();
-                // await Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (content) => PaymentScreen(
-                //             reg: widget.reg, totalpayable: totalpayable)));
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) => PaymentScreen(
+                            reg: widget.reg, totalpayable: totalpayable)));
                 _loadCart();
               },
             ),
