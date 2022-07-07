@@ -1,9 +1,13 @@
 import 'dart:async';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-
-import 'views/userlogin.dart';
+import 'package:my_tutor/views/userlogin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:my_tutor/constant.dart';
+import 'models/reg.dart';
+import 'views/mainscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,6 +38,9 @@ class MySplashScreen extends StatefulWidget {
 }
 
 class _MySplashScreenState extends State<MySplashScreen> {
+  bool remember = false;
+  String status = "Loading...";
+
   @override
   void initState() {
     super.initState();
@@ -95,5 +102,55 @@ class _MySplashScreenState extends State<MySplashScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> loadPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = (prefs.getString('email')) ?? '';
+    String password = (prefs.getString('pass')) ?? '';
+    remember = (prefs.getBool('remember')) ?? false;
+
+    if (remember) {
+      setState(() {
+        status = "Credentials found, auto log in...";
+      });
+      _loginUser(email, password);
+    } else {
+      _loginUser(email, password);
+      setState(() {
+        status = "Login as guest...";
+      });
+    }
+  }
+
+  _loginUser(email, password) {
+    http.post(
+        Uri.parse(CONSTANTS.server + "/mytutor_mp_server/mobile/php/login.php"),
+        body: {"email": email, "password": password}).then((response) {
+      var data = jsonDecode(response.body);
+      if (response.statusCode == 200 && data['status'] == 'success') {
+        var extractdata = data['data'];
+        Registration reg = Registration.fromJson(extractdata);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (content) => MainScreen(
+                      reg: reg,
+                    )));
+      } else {
+        Registration reg = Registration(
+            id: '0',
+            name: 'guest',
+            email: 'guest@slumberjer.com',
+            datereg: '0',
+            cart: '0');
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (content) => MainScreen(
+                      reg: reg,
+                    )));
+      }
+    });
   }
 }
