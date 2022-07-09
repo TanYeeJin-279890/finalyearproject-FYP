@@ -20,7 +20,7 @@ $data = array(
           'amount' => ($amount + 1) * 100, // RM20
 		  'description' => 'Payment for order by '.$name,
           'callback_url' => "https://moneymoney12345.com/279890/mytutor_mp_server/mobile/php/return_url",
-          'redirect_url' => "https://moneymoney12345.com/279890/mytutor_mp_server/mobile/php/payment_update.php?email=$email&mobile=$mobile&amount=$amount&name=$name" 
+          'redirect_url' => "https://moneymoney12345.com/279890/mytutor_mp_server/mobile/php/updatepayment.php?email=$email&mobile=$mobile&amount=$amount&name=$name" 
 );
 
 

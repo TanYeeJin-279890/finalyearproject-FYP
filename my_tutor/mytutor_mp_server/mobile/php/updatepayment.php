@@ -34,24 +34,25 @@ foreach ($data as $key => $value) {
  
  
 $signed= hash_hmac('sha256', $signing, 'S-riezddpGuzruEFCHmbhvXA');
-if ($paidstatus == "Success"){ //payment success
-    $sqlinsertpayment = "INSERT INTO `tbl_orders`( `user_email`,`receipt_id`, `order_paid`,`order_status`) VALUES ('$email','$receiptid','$amount','$status')";
-    $sqpupdatecart = "UPDATE `tbl_cart` SET `cart_status`='paid',`receipt_id`='$receiptid' WHERE user_email='$email' AND cart_status IS NULL";
-    if ($conn->query($sqlinsertpayment) && $conn->query($sqpupdatecart)){
-        $sqlselectcart="SELECT * FROM tbl_cart WHERE receipt_id = '$receiptid'";
-        $result = $conn->query($sqlselectcart);
-        $message = "Payment completed. Return back to the application by pressing the back button on the app task bar.";
-        $amount = number_format((float)$amount, 2, '.', '');
-        printTable($receiptid,$name,$email,$amount,$paidstatus,$message);   
+if ($signed === $data['x_signature']) {
+    if ($paidstatus == "Success"){ //payment success
+        $sqlinsertpayment = "INSERT INTO `tbl_orders`( `user_email`,`receipt_id`, `order_paid`,`order_status`) VALUES ('$email','$receiptid','$amount','$status')";
+        $sqpupdatecart = "UPDATE `tbl_cart` SET `cart_status`='paid',`receipt_id`='$receiptid' WHERE user_email='$email' AND cart_status IS NULL";
+        if ($conn->query($sqlinsertpayment) && $conn->query($sqpupdatecart)){
+            $sqlselectcart="SELECT * FROM tbl_cart WHERE receipt_id = '$receiptid'";
+            $result = $conn->query($sqlselectcart);
+            $message = "Payment completed. Return back to the application by pressing the back button on the app task bar.";
+            $amount = number_format((float)$amount, 2, '.', '');
+            printTable($receiptid,$name,$email,$amount,$paidstatus,$message);   
+        }else{
+            $message = "Payment incompleted. Return back to the application by pressing the back button on the app task bar and perform the payment again.";
+            printTable('Failed',$name,$email,$amount,$paidstatus,$message);
+        }
     }else{
         $message = "Payment incompleted. Return back to the application by pressing the back button on the app task bar and perform the payment again.";
         printTable('Failed',$name,$email,$amount,$paidstatus,$message);
     }
-}else{
-    $message = "Payment incompleted. Return back to the application by pressing the back button on the app task bar and perform the payment again.";
-    printTable('Failed',$name,$email,$amount,$paidstatus,$message);
 }
-
 
 function printTable($receiptid,$name,$email,$amount,$paidstatus,$message){
    echo "
@@ -76,3 +77,5 @@ function printTable($receiptid,$name,$email,$amount,$paidstatus,$message){
         </body></html> 
         ";
 }
+
+?>

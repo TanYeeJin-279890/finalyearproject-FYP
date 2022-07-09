@@ -11,7 +11,6 @@ $useremail = $_POST['email'];
 $cartqty = "1";
 $carttotal = 0;
 
-
 $sqlinsert = "SELECT * FROM tbl_cart WHERE user_email = '$useremail' AND subject_id = '$subid' AND cart_status IS NULL";
 $result = $conn->query($sqlinsert);
 $number_of_result = $result->num_rows;

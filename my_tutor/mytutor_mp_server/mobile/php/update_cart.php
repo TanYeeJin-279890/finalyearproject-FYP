@@ -10,6 +10,7 @@ $cartid = addslashes($_POST['cartid']);
 $op = addslashes($_POST['operation']);
 
 if ($op =="+"){
+    //echo"<script>alert('Subject has been added in cart, are you sure to add again?');</script>";
     $updatecart = "UPDATE `tbl_cart` SET `cart_qty`= (cart_qty+1) WHERE cart_id = '$cartid'";    
 }
 

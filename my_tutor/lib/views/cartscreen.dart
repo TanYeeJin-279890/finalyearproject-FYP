@@ -85,22 +85,25 @@ class _CartScreenState extends State<CartScreen> {
                                           const Icon(Icons.error),
                                     ),
                                   ),
+                                  const SizedBox(height: 16),
                                   Text(
                                     cartList[index].subname.toString(),
+                                    textAlign: TextAlign.center,
                                     style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ),
+                                  const SizedBox(height: 16),
                                   Flexible(
                                     flex: 4,
                                     child: Column(children: [
                                       Column(children: [
-                                        Text("RM " +
-                                            double.parse(cartList[index]
-                                                    .subprice
-                                                    .toString())
-                                                .toStringAsFixed(2) +
-                                            "/subject"),
+                                        // Text("RM " +
+                                        //     double.parse(cartList[index]
+                                        //             .subprice
+                                        //             .toString())
+                                        //         .toStringAsFixed(2) +
+                                        //     "/subject"),
                                         Text(
                                           "RM " +
                                               double.parse(cartList[index]
@@ -108,31 +111,30 @@ class _CartScreenState extends State<CartScreen> {
                                                       .toString())
                                                   .toStringAsFixed(2),
                                           style: const TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 14,
                                               fontWeight: FontWeight.bold),
                                         ),
                                         Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
                                           children: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  _updateCart(index, "-");
-                                                },
-                                                child: const Text("-")),
-                                            Text(cartList[index]
-                                                .cartqty
-                                                .toString()),
-                                            TextButton(
-                                                onPressed: () {
-                                                  _updateCart(index, "+");
-                                                },
-                                                child: const Text("+")),
+                                            // TextButton(
+                                            //     onPressed: () {
+                                            //       _updateCart(index, "-");
+                                            //     },
+                                            //     child: const Text("-")),
+                                            // Text(cartList[index]
+                                            //     .cartqty
+                                            //     .toString()),
+                                            // TextButton(
+                                            //     onPressed: () {
+                                            //       _updateCart(index, "+");
+                                            //     },
+                                            //     child: const Text("+")),
                                             IconButton(
                                                 onPressed: () {
                                                   _deleteItem(index);
                                                 },
-                                                icon: const Icon(Icons.delete))
+                                                icon: const Icon(Icons.delete),
+                                                alignment: Alignment.bottomLeft)
                                           ],
                                         )
                                       ]),
@@ -199,11 +201,11 @@ class _CartScreenState extends State<CartScreen> {
             totalpayable =
                 totalpayable + double.parse(element.pricetotal.toString());
           }
-          titlecenter = qty.toString() + " Products in your cart";
+          titlecenter = qty.toString() + " Subjects in your cart";
           setState(() {});
         }
       } else {
-        titlecenter = "Your Cart is Empty 😞 ";
+        titlecenter = "Congrates, you have emptied your cart.😍";
         cartList.clear();
         setState(() {});
       }
@@ -287,39 +289,39 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  void _updateCart(int index, String s) {
-    if (s == "-") {
-      if (int.parse(cartList[index].cartqty.toString()) == 1) {
-        _deleteItem(index);
-      }
-    }
-    http.post(
-        Uri.parse(
-            CONSTANTS.server + "/mytutor_mp_server/mobile/php/update_cart.php"),
-        body: {'cartid': cartList[index].cartid, 'operation': s}).timeout(
-      const Duration(seconds: 5),
-      onTimeout: () {
-        return http.Response(
-            'Error', 408); // Request Timeout response status code
-      },
-    ).then((response) {
-      var jsondata = jsonDecode(response.body);
-      if (response.statusCode == 200 && jsondata['status'] == 'success') {
-        Fluttertoast.showToast(
-            msg: "Success",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            fontSize: 16.0);
-        _loadCart();
-      } else {
-        Fluttertoast.showToast(
-            msg: "Failed",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            fontSize: 16.0);
-      }
-    });
-  }
+  // void _updateCart(int index, String s) {
+  //   if (s == "-") {
+  //     if (int.parse(cartList[index].cartqty.toString()) == 1) {
+  //       _deleteItem(index);
+  //     }
+  //   }
+  //   http.post(
+  //       Uri.parse(
+  //           CONSTANTS.server + "/mytutor_mp_server/mobile/php/update_cart.php"),
+  //       body: {'cartid': cartList[index].cartid, 'operation': s}).timeout(
+  //     const Duration(seconds: 5),
+  //     onTimeout: () {
+  //       return http.Response(
+  //           'Error', 408); // Request Timeout response status code
+  //     },
+  //   ).then((response) {
+  //     var jsondata = jsonDecode(response.body);
+  //     if (response.statusCode == 200 && jsondata['status'] == 'success') {
+  //       Fluttertoast.showToast(
+  //           msg: "Success",
+  //           toastLength: Toast.LENGTH_SHORT,
+  //           gravity: ToastGravity.BOTTOM,
+  //           timeInSecForIosWeb: 1,
+  //           fontSize: 16.0);
+  //       _loadCart();
+  //     } else {
+  //       Fluttertoast.showToast(
+  //           msg: "Failed",
+  //           toastLength: Toast.LENGTH_SHORT,
+  //           gravity: ToastGravity.BOTTOM,
+  //           timeInSecForIosWeb: 1,
+  //           fontSize: 16.0);
+  //     }
+  //   });
+  // }
 }

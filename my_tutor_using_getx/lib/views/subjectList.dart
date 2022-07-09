@@ -425,7 +425,7 @@ class _SubjectListState extends State<SubjectList> {
     if (widget.reg.email == "guest@slumberjer.com") {
       _loadOptions();
     } else {
-      _confirmationDialog(index);
+      //_confirmationDialog(index);
     }
   }
 
@@ -465,78 +465,87 @@ class _SubjectListState extends State<SubjectList> {
     }
   }
 
-  void _confirmationDialog(int index) {
-    index = int.parse(subjectList[index].subjectId.toString());
-    var qty = int.parse(cart[index].cartqty.toString());
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          if (qty > 1) {
-            return AlertDialog(
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              title: const Text(
-                "Subject has been added to the cart",
-                style: TextStyle(),
-              ),
-              content:
-                  const Text("Are you sure to add again?", style: TextStyle()),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text(
-                    "Yes",
-                    style: TextStyle(),
-                  ),
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    _addtoCart(index);
-                  },
-                ),
-                TextButton(
-                  child: const Text(
-                    "No",
-                    style: TextStyle(),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          } else {
-            return AlertDialog(
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              title: const Text(
-                "Add To Cart",
-                style: TextStyle(),
-              ),
-              content: const Text("Are you sure?", style: TextStyle()),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text(
-                    "Yes",
-                    style: TextStyle(),
-                  ),
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    _addtoCart(index);
-                  },
-                ),
-                TextButton(
-                  child: const Text(
-                    "No",
-                    style: TextStyle(),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          }
-        });
-  }
+  void getqty(int index) {
+    String subid;
+    http.post(
+          Uri.parse(
+              CONSTANTS.server + "/mytutor_mp_server/mobile/php/insert_cart.php"),
+          body: {"subjectId": subid, "password": _password}).then((response) {
+        print(response.body);
+  });
+
+  // void _confirmationDialog(int index) {
+  //   index = int.parse(subjectList[index].subjectId.toString());
+  //   var qty = int.parse(cart[index].cartqty.toString());
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         if (qty > 1) {
+  //           return AlertDialog(
+  //             shape: const RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
+  //             title: const Text(
+  //               "Subject has been added to the cart",
+  //               style: TextStyle(),
+  //             ),
+  //             content:
+  //                 const Text("Are you sure to add again?", style: TextStyle()),
+  //             actions: <Widget>[
+  //               TextButton(
+  //                 child: const Text(
+  //                   "Yes",
+  //                   style: TextStyle(),
+  //                 ),
+  //                 onPressed: () async {
+  //                   Navigator.of(context).pop();
+  //                   _addtoCart(index);
+  //                 },
+  //               ),
+  //               TextButton(
+  //                 child: const Text(
+  //                   "No",
+  //                   style: TextStyle(),
+  //                 ),
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //               ),
+  //             ],
+  //           );
+  //         } else {
+  //           return AlertDialog(
+  //             shape: const RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
+  //             title: const Text(
+  //               "Add To Cart",
+  //               style: TextStyle(),
+  //             ),
+  //             content: const Text("Are you sure?", style: TextStyle()),
+  //             actions: <Widget>[
+  //               TextButton(
+  //                 child: const Text(
+  //                   "Yes",
+  //                   style: TextStyle(),
+  //                 ),
+  //                 onPressed: () async {
+  //                   Navigator.of(context).pop();
+  //                   _addtoCart(index);
+  //                 },
+  //               ),
+  //               TextButton(
+  //                 child: const Text(
+  //                   "No",
+  //                   style: TextStyle(),
+  //                 ),
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //               ),
+  //             ],
+  //           );
+  //         }
+  //       });
+  // }
 
   void _addtoCart(int index) {
     http.post(
